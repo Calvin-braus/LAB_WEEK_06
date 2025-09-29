@@ -14,19 +14,21 @@ private val MALE_SYMBOL = "\u2642"
 private const val UNKNOWN_SYMBOL = "?"
 
 class CatViewHolder(
-    containerView: View,
-    private val imageLoader: ImageLoader
+    private val containerView: View,
+    private val imageLoader: ImageLoader,
+    private val onClickListener: CatAdapter.OnClickListener // Huruf besar di O
 ) : RecyclerView.ViewHolder(containerView) {
 
-    // Referensi ke setiap view di item_list.xml
     private val catPhotoView: ImageView by lazy { containerView.findViewById(R.id.cat_photo) }
     private val catNameView: TextView by lazy { containerView.findViewById(R.id.cat_name) }
     private val catBreedView: TextView by lazy { containerView.findViewById(R.id.cat_breed) }
     private val catBiographyView: TextView by lazy { containerView.findViewById(R.id.cat_biography) }
     private val catGenderView: TextView by lazy { containerView.findViewById(R.id.cat_gender) }
 
-    // Fungsi untuk bind data ke layout
     fun bindData(cat: CatModel) {
+        containerView.setOnClickListener {
+            onClickListener.onItemClick(cat)  // <-- ini akan pakai interface Adapter
+        }
         imageLoader.loadImage(cat.imageUrl, catPhotoView)
         catNameView.text = cat.name
         catBreedView.text = when (cat.breed) {
@@ -41,5 +43,9 @@ class CatViewHolder(
             Gender.Male -> MALE_SYMBOL
             else -> UNKNOWN_SYMBOL
         }
+    }
+
+    interface OnClickListener {
+        fun onItemClick(cat: CatModel) // Sama seperti yang dipanggil di bindData
     }
 }
